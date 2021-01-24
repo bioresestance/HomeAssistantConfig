@@ -1,0 +1,30 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+light:
+  - platform: group
+    name: Bedroom
+    entities:
+      - light.bedroom_ceiling_1
+      - light.bedroom_ceiling_2
+      - light.bedroom_ceiling_3
+
+  # Treat switches as lights
+  - platform: switch
+    name: Main Door Light
+    entity_id: switch.door_light
+
+  - platform: switch
+    name: Kitchen Light
+    entity_id: switch.kitchen_main
+
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml

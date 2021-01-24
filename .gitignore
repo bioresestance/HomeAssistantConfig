@@ -1,0 +1,9 @@
+.cloud/*
+node-red/*
+.storage/*
+harmony_*
+*.log
+*.db
+secrets.yaml
+blueprints/*
+.HA_VERSION
