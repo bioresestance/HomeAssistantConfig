@@ -1,4 +1,7 @@
 
+##################################################################### 
+#                         General Settings
+#####################################################################
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
@@ -6,6 +9,9 @@ default_config:
 tts:
   - platform: google_translate
 
+##################################################################### 
+#           Lights (groups and switch-light conversions)
+#####################################################################
 light:
   - platform: group
     name: Bedroom
@@ -23,7 +29,24 @@ light:
     name: Kitchen Light
     entity_id: switch.kitchen_main
 
+    
+##################################################################### 
+#                 Proxmox Integration
+#####################################################################
+proxmoxve:
+  - host: !secret proxmox_url
+    verify_ssl: false
+    username: !secret proxmox_user
+    password: !secret proxmox_pass
+    nodes:
+      - node: pve
+        vms:
+          - 100
+          - 101
 
+##################################################################### 
+#                 Misc File Includes
+#####################################################################
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
