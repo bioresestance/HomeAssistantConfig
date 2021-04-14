@@ -7,3 +7,5 @@ harmony_*
 secrets.yaml
 blueprints/*
 .HA_VERSION
+custom_components
+www/community

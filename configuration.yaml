@@ -5,6 +5,10 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
+
+recorder:
+  db_url: !secret recorder_url
+
 # Text to speech
 tts:
   - platform: google_translate
@@ -29,20 +33,42 @@ light:
     name: Kitchen Light
     entity_id: switch.kitchen_main
 
-    
+
 ##################################################################### 
-#                 Proxmox Integration
+#                 Sensors
 #####################################################################
-proxmoxve:
-  - host: !secret proxmox_url
-    verify_ssl: false
-    username: !secret proxmox_user
-    password: !secret proxmox_pass
-    nodes:
-      - node: pve
-        vms:
-          - 100
-          - 101
+binary_sensor:
+  # Work day sensor. Only is true Mon-Fri. Does not trigger on Holidays.
+  - platform: workday
+    country: CA
+    province: BC
+    workdays: [mon, tue, wed, thu, fri]
+    excludes: [sat, sun, holiday]
+
+##################################################################### 
+#                 Integrations
+#####################################################################
+# proxmoxve:
+#   - host: !secret proxmox_url
+#     verify_ssl: false
+#     username: !secret proxmox_user
+#     password: !secret proxmox_pass
+#     nodes:
+#       - node: pve
+#         vms:
+#           - 100
+#           - 101
+
+# Example configuration.yaml entry
+nextcloud:
+  url: !secret nextcloud_url
+  username: !secret nextcloud_user
+  password: !secret nextcloud_pass
+
+# Example configuration.yaml entry
+neato:
+  client_id: !secret neato_client_id
+  client_secret: !secret neato_secret
 
 ##################################################################### 
 #                 Misc File Includes
