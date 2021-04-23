@@ -23,6 +23,12 @@ light:
       - light.bedroom_ceiling_1
       - light.bedroom_ceiling_2
       - light.bedroom_ceiling_3
+  - platform: group
+    name: Kitchen
+    entities:
+      - light.kitchen_light
+      - light.kitchen_sink_light
+      - light.main_door_light
 
   # Treat switches as lights
   - platform: switch
