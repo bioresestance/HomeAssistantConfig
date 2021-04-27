@@ -17,12 +17,15 @@ tts:
 #           Lights (groups and switch-light conversions)
 #####################################################################
 light:
+  
+  # Create Groups of lights per room.
   - platform: group
     name: Bedroom
     entities:
       - light.bedroom_ceiling_1
       - light.bedroom_ceiling_2
       - light.bedroom_ceiling_3
+
   - platform: group
     name: Kitchen
     entities:
@@ -30,7 +33,12 @@ light:
       - light.kitchen_sink_light
       - light.main_door_light
 
-  # Treat switches as lights
+  - platform: group
+    name: Dinning Room
+    entities:
+      - light.dinning_room_light
+
+  # Create Light Entities from switches. Makes them groupable.
   - platform: switch
     name: Main Door Light
     entity_id: switch.door_light
@@ -38,6 +46,10 @@ light:
   - platform: switch
     name: Kitchen Light
     entity_id: switch.kitchen_main
+
+  - platform: switch
+    name: Dinning Room Light
+    entity_id: switch.desk_light
 
 
 ##################################################################### 
@@ -54,16 +66,6 @@ binary_sensor:
 ##################################################################### 
 #                 Integrations
 #####################################################################
-# proxmoxve:
-#   - host: !secret proxmox_url
-#     verify_ssl: false
-#     username: !secret proxmox_user
-#     password: !secret proxmox_pass
-#     nodes:
-#       - node: pve
-#         vms:
-#           - 100
-#           - 101
 
 # Example configuration.yaml entry
 nextcloud:
