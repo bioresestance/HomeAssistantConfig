@@ -38,6 +38,11 @@ light:
     entities:
       - light.dinning_room_light
 
+  - platform: group
+    name: Living Room
+    entities:
+      - light.bloomlight
+
   # Create Light Entities from switches. Makes them groupable.
   - platform: switch
     name: Main Door Light
