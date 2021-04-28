@@ -9,3 +9,4 @@ blueprints/*
 .HA_VERSION
 custom_components
 www/community
+image/
