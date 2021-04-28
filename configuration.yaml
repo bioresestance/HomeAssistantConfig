@@ -68,6 +68,17 @@ binary_sensor:
     workdays: [mon, tue, wed, thu, fri]
     excludes: [sat, sun, holiday]
 
+  - platform: template
+    sensors:
+      # Sensor for if anyone is occupying the home or not
+      home_occupied:
+        friendly_name: "Home Occupied"
+        value_template: >-
+          {{ is_state( 'person.aaron', 'home') or is_state('person.gina', 'home')}}
+
+
+
+
 ##################################################################### 
 #                 Integrations
 #####################################################################
