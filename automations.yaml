@@ -4,11 +4,14 @@
     at 8:30 AM. '
   trigger:
   - platform: time
-    at: '8:30:00'
+    at: 08:00:00
   condition:
   - condition: state
     entity_id: binary_sensor.workday_sensor
     state: 'on'
+  - condition: state
+    entity_id: person.aaron
+    state: home
   action:
   - service: light.turn_on
     target:
@@ -17,16 +20,93 @@
       color_temp: 300
       brightness_pct: 100
   mode: single
-
-# - id: '435456543543546'
-#   trigger:
-#   - minutes: /1
-#     platform: time
-#     seconds: 0
-#   condition:
-#   - condition: template
-#     value_template: '{{ (((as_timestamp(now()) | int) + 3*60) | timestamp_custom("%Y-%m-%d %H:%M:00")) == states.sensor.next_alarm.state }}'
-#   action:
-#   - data:
-#       entity_id: scene.wakeup
-#     service: scene.turn_on
+- id: webhook
+  alias: Webhook Recieved
+  initial_state: true
+  trigger:
+    platform: event
+    event_type: ifttt_webhook_received
+    event_data:
+      action: call_service
+  action:
+    service_template: '{{ trigger.event.data.service }}'
+    data_template:
+      name: '{{ trigger.event.data.name }}'
+- id: '1620616987773'
+  alias: Front Door Opened
+  description: Turns on front door light when front door is opened. After 2 minutes
+    the light is turned off again. Will not run if there is recent motion near the
+    door, since the person is leaving. Also will not run if light is already on.
+  trigger:
+  - type: turned_on
+    platform: device
+    device_id: 283c690dd1ed5389e09c0e32ed653cfd
+    entity_id: binary_sensor.frontdoorsensor_ias_zone
+    domain: binary_sensor
+  condition:
+  - condition: state
+    entity_id: binary_sensor.front_door_motion_ias_zone
+    state: 'off'
+    for: 00:00:45
+  - condition: state
+    entity_id: light.main_door_light
+    state: 'off'
+  action:
+  - type: turn_on
+    device_id: ae672b8789c7a74689e6bc058999325d
+    entity_id: switch.door_light
+    domain: switch
+  - wait_for_trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door_motion_ias_zone
+      to: 'off'
+      for: 00:02:00
+      from: 'on'
+    continue_on_timeout: true
+  - type: turn_off
+    device_id: ae672b8789c7a74689e6bc058999325d
+    entity_id: switch.door_light
+    domain: switch
+  mode: single
+- id: '1620621460355'
+  alias: Turn off lights when home not occupied
+  description: 5 minutes after the house has been unoccupied, turn off all lights
+    in the house.
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.home_occupied
+    to: 'off'
+    for: 00:05:00
+  condition: []
+  action:
+  - service: light.turn_off
+    target:
+      entity_id:
+      - light.bedroom
+      - light.kitchen
+      - light.dinning_room
+      - light.living_room
+  mode: single
+- id: '1627260459972'
+  alias: Kitchen Cabinet Lights Schedule
+  description: ''
+  use_blueprint:
+    path: EPMatt/on_off_schedule_state_persistence.yaml
+    input:
+      off_time: '22:00:00'
+      automation_target:
+        entity_id:
+        - light.kitchen_wled
+      trigger_at_homeassistant_startup: true
+      on_time: '16:30:00'
+- id: '1627260639011'
+  alias: Deck Lights Schedule
+  description: ''
+  use_blueprint:
+    path: EPMatt/on_off_schedule_state_persistence.yaml
+    input:
+      off_time: '22:45:00'
+      automation_target:
+        entity_id: light.deck_wled
+      on_time: '17:00:00'
+      trigger_at_homeassistant_startup: true

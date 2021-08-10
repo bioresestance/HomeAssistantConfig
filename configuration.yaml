@@ -5,6 +5,8 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
+frontend:
+  themes: !include_dir_merge_named themes/
 
 recorder:
   db_url: !secret recorder_url
@@ -12,6 +14,19 @@ recorder:
 # Text to speech
 tts:
   - platform: google_translate
+
+
+# Example configuration.yaml entry
+http:
+  cors_allowed_origins:
+    - https://google.com
+    - https://oauth.google.com
+    - https://www.home-assistant.io
+    - https://hassio.aaronslab.ca
+    - https://oauth.aaronslab.ca
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.69.0/24
 
 ##################################################################### 
 #           Lights (groups and switch-light conversions)
@@ -68,15 +83,32 @@ binary_sensor:
     workdays: [mon, tue, wed, thu, fri]
     excludes: [sat, sun, holiday]
 
-  - platform: template
-    sensors:
-      # Sensor for if anyone is occupying the home or not
-      home_occupied:
-        friendly_name: "Home Occupied"
-        value_template: >-
-          {{ is_state( 'person.aaron', 'home') or is_state('person.gina', 'home')}}
+rest:
+  - resource: "http://192.168.69.20:5000/api/v1/daily"
+    verify_ssl: false
+    scan_interval: 86400 # 24 hours
+    sensor:
+      - name: BCH_daily_usage
+        value_template: "{{value_json.daily_usage}}"
+        unit_of_measurement: "kWh"
 
 
+
+sensor:
+  - platform: integration
+    source: sensor.BCH_daily_energy
+    name: total_power
+    round: 2
+
+
+##################################################################### 
+#                 Template Sensors
+#####################################################################
+
+template:
+  - binary_sensor:
+      - name: "Home Occupied"
+        state: "{{ is_state('person.aaron', 'home') or is_state('person.gina', 'home')}}"
 
 
 ##################################################################### 
@@ -84,10 +116,10 @@ binary_sensor:
 #####################################################################
 
 # Example configuration.yaml entry
-nextcloud:
-  url: !secret nextcloud_url
-  username: !secret nextcloud_user
-  password: !secret nextcloud_pass
+# nextcloud:
+#   url: !secret nextcloud_url
+#   username: !secret nextcloud_user
+#   password: !secret nextcloud_pass
 
 # Example configuration.yaml entry
 neato:

@@ -10,3 +10,5 @@ blueprints/*
 custom_components
 www/community
 image/
+.shopping_list.json
+www/pictures
