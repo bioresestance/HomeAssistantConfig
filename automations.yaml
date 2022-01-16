@@ -79,13 +79,7 @@
     for: 00:05:00
   condition: []
   action:
-  - service: light.turn_off
-    target:
-      entity_id:
-      - light.bedroom
-      - light.kitchen
-      - light.dinning_room
-      - light.living_room
+  - service: script.turn_off_all_light
   mode: single
 - id: '1627260459972'
   alias: Kitchen Cabinet Lights Schedule
@@ -105,8 +99,24 @@
   use_blueprint:
     path: EPMatt/on_off_schedule_state_persistence.yaml
     input:
-      off_time: '22:45:00'
+      off_time: '22:30:00'
       automation_target:
         entity_id: light.deck_wled
-      on_time: '17:00:00'
+      on_time: '16:00:00'
       trigger_at_homeassistant_startup: true
+- id: '1630793574106'
+  alias: Test
+  description: ''
+  use_blueprint:
+    path: SeanM/zha-aqara-wireless-mini-switch.yaml
+    input:
+      aqara_mini_switch: dad39412f48d25ad52fb80c43f10b3ae
+      button_single_press:
+      - service: light.toggle
+        target:
+          entity_id: light.nanoleaf_light_panels_53_e1_ec
+        data:
+          brightness_pct: 100
+          color_temp: 351
+      button_long_press:
+      - service: script.turn_off_all_light
